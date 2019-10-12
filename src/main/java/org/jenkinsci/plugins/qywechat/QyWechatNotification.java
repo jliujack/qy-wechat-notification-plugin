@@ -65,7 +65,7 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
             listener.getLogger().println("读取环境变量异常" + e.getMessage());
             envVars = new EnvVars();
         }
-        NotificationConfig config = getConfig(envVars);
+        NotificationConfig config = getConfig(envVars, build);
         if(StringUtils.isEmpty(config.webhookUrl)){
             return true;
         }
@@ -91,7 +91,7 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
      */
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
-        NotificationConfig config = getConfig(run.getEnvironment(listener));
+        NotificationConfig config = getConfig(run.getEnvironment(listener), run);
         if(StringUtils.isEmpty(config.webhookUrl)){
             return;
         }
@@ -164,7 +164,7 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
      * @param envVars
      * @return
      */
-    public NotificationConfig getConfig(EnvVars envVars){
+    public NotificationConfig getConfig(EnvVars envVars, Run<?, ?> build){
         NotificationConfig config = DESCRIPTOR.getUnsaveConfig();
         if(StringUtils.isNotEmpty(webhookUrl)){
             config.webhookUrl = webhookUrl;
@@ -194,20 +194,14 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
         	config.initiator = envVars.get("gitlabUserName");
         }
         if(config.initiator == null || config.initiator == "") {
-        	if(envVars.containsKey("BUILD_USER")){
-            	config.initiator = System.getenv("BUILD_USER");
-            }
+        	UserIdCause userIdCause = (UserIdCause) build.getCause(UserIdCause.class);
+        	if(userIdCause != null) {
+        		config.initiator = userIdCause.getUserName();
+        	}
         	config.buildSource = "用户手动";
         } else {
         	config.buildSource = "gitlab-push";
         }
-        if(config.initiator == null || config.initiator == "") {
-        	// config.initiator = "缺少环境变量BUILD_USER";
-		    // config.initiator = System.getenv().toString();
-		    // config.buildSource = System.getProperty("BUILD_USER");
-        	
-        }
-        
         return config;
     }
 
