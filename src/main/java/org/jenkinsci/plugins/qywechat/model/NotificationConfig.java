@@ -51,4 +51,13 @@ public class NotificationConfig {
      */
     public boolean failNotify = false;
 
+    /**
+     * 构建发起者全称
+     */
+    public String initiator = "";
+    
+    /**
+     * 构建发起来源
+     */
+    public String buildSource = "";
 }

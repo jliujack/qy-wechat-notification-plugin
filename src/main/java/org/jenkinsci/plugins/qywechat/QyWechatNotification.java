@@ -16,6 +16,9 @@ import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import hudson.model.User;
+import hudson.model.Cause.*;
+import org.acegisecurity.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,6 +34,10 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
     private String mentionedId;
 
     private String mentionedMobile;
+    
+    private String initiator;
+    
+    private String buildSource;
 
     private boolean failNotify;
 
@@ -182,6 +189,25 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
             String val = NotificationUtil.replaceMultipleEnvValue(config.mentionedMobile, envVars);
             config.mentionedMobile = val;
         }
+        config.initiator = envVars.get("gitlabUserName");
+        if(envVars.containsKey("gitlabUserName")){
+        	config.initiator = envVars.get("gitlabUserName");
+        }
+        if(config.initiator == null || config.initiator == "") {
+        	if(envVars.containsKey("BUILD_USER")){
+            	config.initiator = System.getenv("BUILD_USER");
+            }
+        	config.buildSource = "用户手动";
+        } else {
+        	config.buildSource = "gitlab-push";
+        }
+        if(config.initiator == null || config.initiator == "") {
+        	// config.initiator = "缺少环境变量BUILD_USER";
+		    // config.initiator = System.getenv().toString();
+		    // config.buildSource = System.getProperty("BUILD_USER");
+        	
+        }
+        
         return config;
     }
 
@@ -218,7 +244,7 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
     public String getMentionedMobile() {
         return mentionedMobile;
     }
-
+    
     public boolean isFailNotify() {
         return failNotify;
     }

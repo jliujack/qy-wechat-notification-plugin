@@ -42,6 +42,16 @@ public class BuildBeginInfo {
      * 环境名称
      */
     private String topicName = "";
+    
+    /**
+     * 构建发起人
+     */
+    private String initiator = "";
+    
+    /**
+     * 构建来源
+     */
+    private String buildSource = "";
 
     public BuildBeginInfo(String projectName, AbstractBuild<?, ?> build, NotificationConfig config){
         //获取请求参数
@@ -79,6 +89,14 @@ public class BuildBeginInfo {
         if(config.topicName!=null){
             topicName = config.topicName;
         }
+        //构建发起人
+        if(config.initiator!=null) {
+        	initiator = config.initiator;
+        }
+    	//构建来源
+        if(config.buildSource!=null) {
+        	buildSource = config.buildSource;
+        }
     }
 
     public String toJSONString(){
@@ -109,6 +127,8 @@ public class BuildBeginInfo {
             content.append(this.topicName);
         }
         content.append("<font color=\"info\">【" + this.projectName + "】</font>开始构建\n");
+        content.append(" >构建发起人：<font color=\"comment\">" +  initiator + "</font>\n");
+        content.append(" >构建方式：<font color=\"comment\">" +  buildSource + "</font>\n");
         content.append(" >构建参数：<font color=\"comment\">" + paramBuffer.toString() + "</font>\n");
         content.append(" >预计用时：<font color=\"comment\">" +  durationTimeStr + "</font>\n");
         if(StringUtils.isNotEmpty(this.consoleUrl)){
