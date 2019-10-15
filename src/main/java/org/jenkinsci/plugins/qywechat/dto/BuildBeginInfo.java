@@ -52,6 +52,11 @@ public class BuildBeginInfo {
      * 构建来源
      */
     private String buildSource = "";
+    
+    /**
+     * 构建编号
+     */
+    private String buildNumber = "";
 
     public BuildBeginInfo(String projectName, AbstractBuild<?, ?> build, NotificationConfig config){
         //获取请求参数
@@ -97,6 +102,10 @@ public class BuildBeginInfo {
         if(config.buildSource!=null) {
         	buildSource = config.buildSource;
         }
+        //构建编号
+        if(config.buildNumber!=null) {
+        	buildNumber = config.buildNumber;
+        }
     }
 
     public String toJSONString(){
@@ -126,7 +135,7 @@ public class BuildBeginInfo {
         if(StringUtils.isNotEmpty(topicName)){
             content.append(this.topicName);
         }
-        content.append("<font color=\"info\">【" + this.projectName + "】</font>开始构建\n");
+        content.append("<font color=\"info\">【" + this.projectName + "】</font>#" + buildNumber + " 开始构建\n");
         content.append(" >构建发起人：<font color=\"comment\">" +  initiator + "</font>\n");
         content.append(" >构建方式：<font color=\"comment\">" +  buildSource + "</font>\n");
         content.append(" >构建参数：<font color=\"comment\">" + paramBuffer.toString() + "</font>\n");

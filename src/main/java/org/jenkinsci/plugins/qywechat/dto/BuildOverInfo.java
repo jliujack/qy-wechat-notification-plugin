@@ -40,6 +40,11 @@ public class BuildOverInfo {
      * 执行结果
      */
     private Result result;
+    
+    /**
+     * 构建编号
+     */
+    private String buildNumber = "";
 
     public BuildOverInfo(String projectName, Run<?, ?> run, NotificationConfig config){
         //使用时间
@@ -66,6 +71,10 @@ public class BuildOverInfo {
         if(config.topicName!=null){
             topicName = config.topicName;
         }
+        //构建编号
+        if(config.buildNumber!=null) {
+        	buildNumber = config.buildNumber;
+        }
         //结果
         result = run.getResult();
     }
@@ -76,7 +85,7 @@ public class BuildOverInfo {
         if(StringUtils.isNotEmpty(topicName)){
             content.append(this.topicName);
         }
-        content.append("<font color=\"info\">【" + this.projectName + "】</font>构建" + getStatus() + "\n");
+        content.append("<font color=\"info\">【" + this.projectName + "】</font>#" + buildNumber + " 构建" + getStatus() + "\n");
         content.append(" >构建用时：<font color=\"comment\">" +  this.useTimeString + "</font>\n");
         if(StringUtils.isNotEmpty(this.consoleUrl)) {
             content.append(" >[查看控制台](" + this.consoleUrl + ")");

@@ -60,4 +60,9 @@ public class NotificationConfig {
      * 构建发起来源
      */
     public String buildSource = "";
+    
+    /**
+     * 构建job编号
+     */
+    public String buildNumber = "nan";
 }

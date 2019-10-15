@@ -189,6 +189,7 @@ public class QyWechatNotification extends Publisher implements SimpleBuildStep {
             String val = NotificationUtil.replaceMultipleEnvValue(config.mentionedMobile, envVars);
             config.mentionedMobile = val;
         }
+        config.buildNumber = envVars.get("BUILD_NUMBER");
         config.initiator = envVars.get("gitlabUserName");
         if(envVars.containsKey("gitlabUserName")){
         	config.initiator = envVars.get("gitlabUserName");
